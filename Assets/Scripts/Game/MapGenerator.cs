@@ -57,8 +57,7 @@ public class MapGenerator : MonoBehaviour
         GenerateMap();
         SpawnPoint();
 
-        GetTowerGeneratorLocation(pathTiles);
-        GenerateTower(difficulty, Towers.towers);
+        GenerateTower(difficulty, GetTowerGeneratorLocation(pathTiles));
 
         
     }
@@ -289,11 +288,9 @@ public class MapGenerator : MonoBehaviour
                 if (!pathTiles.Contains(mapTiles[tileIndex - 1]))
                 {
                     list.Add(mapTiles[tileIndex - 1]);
-                    Towers.towers.Add(mapTiles[tileIndex - 1]);
                 }
                 
                 list.Add(mapTiles[tileIndex + 1]);
-                Towers.towers.Add(mapTiles[tileIndex + 1]);
 
             }
             if (!pathTiles.Contains(mapTiles[tileIndex - 1]) && pathTiles[i] != startTile && pathTiles[i] != endTile) // Yola yerlestirme yapilmamasi icin kosullar kontrol edilir.
@@ -301,11 +298,9 @@ public class MapGenerator : MonoBehaviour
                 if (!pathTiles.Contains(mapTiles[tileIndex + 1]))
                 {
                     list.Add(mapTiles[tileIndex + 1]);
-                    Towers.towers.Add(mapTiles[tileIndex + 1]);
                 }
 
                 list.Add(mapTiles[tileIndex - 1]);
-                Towers.towers.Add(mapTiles[tileIndex - 1]);
 
             }
             if (tileIndex - mapWidth > 0 && tileIndex + mapWidth < mapTiles.Count) // Yola yerlestirme yapilmamasi icin kosullar kontrol edilir. Liste disina cikmamasi saglanir.
@@ -314,19 +309,17 @@ public class MapGenerator : MonoBehaviour
                 if (!pathTiles.Contains(mapTiles[tileIndex + mapWidth]))
                 {
                     list.Add(mapTiles[tileIndex + mapWidth]);
-                    Towers.towers.Add(mapTiles[tileIndex + mapWidth]);
                 }
                 if (!pathTiles.Contains(mapTiles[tileIndex - mapWidth]))
                 {
                     list.Add(mapTiles[tileIndex - mapWidth]);
-                    Towers.towers.Add(mapTiles[tileIndex - mapWidth]);
                 }
 
             }
             
         }
         // Kulelerin yerlestirilecegi yerlerin belli olmasi icin belirlenen bir renge boyanir.
-        foreach (GameObject tile in Towers.towers)
+        foreach (GameObject tile in list)
         {
 
             tile.GetComponent<SpriteRenderer>().color = towerPlaceColor;

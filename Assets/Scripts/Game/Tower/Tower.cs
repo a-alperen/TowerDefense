@@ -1,11 +1,13 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine.UI;
 
 public class Tower : MonoBehaviour
 {
     private Transform currentTarget; //Kulenin menzilindeki mevcut durumdaki en yakin hedef ogrenci.
 
     [Header("Attributes")]
+    [SerializeField] private float startHealth;
+    [SerializeField] private float health;
     [SerializeField] private float range; // Kulenin atis yapabilecegi max menzili.
     [SerializeField] private float fireRate = 1f;
     private float fireCountDown = 0f;
@@ -16,9 +18,10 @@ public class Tower : MonoBehaviour
     public float turnSpeed = 10f;
     public GameObject bulletPrefab;
     public Transform firePoint;
-
+    public Image healthBar;
     private void Start()
     {
+        InitiliazeTower();
         InvokeRepeating(nameof(UpdateTarget), 0f, 0.5f);
     }
     private void Update()
@@ -34,7 +37,10 @@ public class Tower : MonoBehaviour
         fireCountDown -= Time.deltaTime;
     }
 
-    
+    void InitiliazeTower()
+    {
+        health = startHealth;
+    }
     void UpdateTarget()
     {
         float shortestDistance = Mathf.Infinity;
@@ -73,6 +79,22 @@ public class Tower : MonoBehaviour
         {
             bullet.Seek(currentTarget);
         }
+    }
+    public void TakeDamage(float amount)
+    {
+        health -= amount;
+
+        healthBar.fillAmount = health / startHealth;
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+    private void Die()
+    {
+        Towers.towers.Remove(gameObject);
+        Destroy(transform.gameObject);
     }
     private void RotateTower()
     {

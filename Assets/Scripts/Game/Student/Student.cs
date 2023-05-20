@@ -40,7 +40,7 @@ public class Student : MonoBehaviour
     }
     private void Update()
     {
-        if (isAttacking)
+        if (isAttacking && currentTarget != null)
         {
             RotateStudent();
             if (fireCountDown <= 0f)
@@ -93,11 +93,15 @@ public class Student : MonoBehaviour
     }
     private void RotateStudent()
     {
-        Vector3 dir = currentTarget.position - transform.position;
-        Vector3 rotatedVectorDir = Quaternion.Euler(0, 0, 90) * dir;
-        Quaternion lookRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorDir);
-        Quaternion rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed);
-        partToRotate.rotation = rotation;
+        if(currentTarget != null)
+        {
+            Vector3 dir = currentTarget.position - transform.position;
+            Vector3 rotatedVectorDir = Quaternion.Euler(0, 0, 90) * dir;
+            Quaternion lookRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorDir);
+            Quaternion rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed);
+            partToRotate.rotation = rotation;
+        }
+        
     }
     private void MoveStudent()
     {
@@ -120,7 +124,7 @@ public class Student : MonoBehaviour
                     targetTile = MapGenerator.pathTiles[currentIndex + 1];
                     Vector3 dir = MapGenerator.pathTiles[currentIndex + 1].transform.position - transform.position;
                     float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                    transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    partToRotate.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
                 }
 

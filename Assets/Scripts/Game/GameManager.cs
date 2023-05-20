@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [Header("Player Stats")]
     public float gameMoney;
     [SerializeField] private float time;
-
+    public int hitCount;
     public bool isPlaying;
     public bool isPaused;
 

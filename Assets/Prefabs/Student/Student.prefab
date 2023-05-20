@@ -141,6 +141,7 @@ MonoBehaviour:
   healthBar: {fileID: 4791166518763575322}
   partToRotate: {fileID: 5138770242929625875}
   turnSpeed: 10
+  isAttacking: 0
 --- !u!1 &8762153894783965838
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,6 +403,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3379287746416485162, guid: bddb5773cfd3a1743b529662768d1d7d, type: 3}
       propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5072462781988415365, guid: bddb5773cfd3a1743b529662768d1d7d, type: 3}
+      propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5823325317836505299, guid: bddb5773cfd3a1743b529662768d1d7d, type: 3}
