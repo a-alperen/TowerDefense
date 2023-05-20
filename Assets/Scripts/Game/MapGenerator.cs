@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 public class MapGenerator : MonoBehaviour
 {
     public GameObject MapTile;
-    public GameObject tower;
+    public GameObject towerPrefab;
     [SerializeField]int difficulty = 2;
 
     public int mapWidth;
@@ -28,6 +28,8 @@ public class MapGenerator : MonoBehaviour
     private int currentIndex;
     private int nextIndex;
 
+    public GameObject parentMapTiles;
+    public GameObject parentTowers;
     public Color pathColor;
     public Color startColor;
     public Color endColor;
@@ -159,6 +161,7 @@ public class MapGenerator : MonoBehaviour
                 Vector2 tilePos = new(_tileScaleX / 2f + -cameraWidth + x * tileScaleX,_tileScaleY /2f+ -cameraHeight + y * tileScaleY);
                 mapTiles.Add(newTile);
                 newTile.transform.position = tilePos;
+                newTile.transform.parent = parentMapTiles.transform;
             }
         }
 
@@ -252,9 +255,11 @@ public class MapGenerator : MonoBehaviour
                 {
                     if (!towerTile.Contains(tile))
                     {
-                        /*GameObject towerr = */Instantiate(tower, tile.transform.position /*+ new Vector3(0, (Random.Range(0, 1) < 0.5) ? 1 * tileScaleY : -1 * tileScaleY)*/, Quaternion.identity);
+                        GameObject tower = Instantiate(towerPrefab, tile.transform.position /*+ new Vector3(0, (Random.Range(0, 1) < 0.5) ? 1 * tileScaleY : -1 * tileScaleY)*/, Quaternion.identity);
                         towerCount -= 1;
-                        towerTile.Add(tile);
+                        towerTile.Add(tower);
+                        tower.transform.parent = parentTowers.transform;
+                        Towers.towers.Add(tower);
                     }
                     
                 }
@@ -346,8 +351,4 @@ public class MapGenerator : MonoBehaviour
         return count;
     }
 
-    /// <summary>
-    /// Oyun yeniden baslatilirken cokmemesi icin listeler temizlenir.
-    /// </summary>
-    
 }

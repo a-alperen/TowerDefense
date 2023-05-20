@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,159 +7,76 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     [Header("Player Stats")]
-    [SerializeField] private float gameMoney;
-    [SerializeField] private int healthCount;
-    [SerializeField] private int enemyHealthCount;
+    public float gameMoney;
     [SerializeField] private float time;
 
-    public static bool isPlaying;
+    public bool isPlaying;
+    public bool isPaused;
 
-    private QuestionManager questionManager;
-    private UISystem uiManager;
-    
     //public GameObject winPanel;
 
-    
+    private void Awake()
+    {
+        Instance = this;
+        isPaused = false;
+        isPlaying = true;
+    }
     // Start is called before the first frame update
     void Start()
     {
-        isPlaying = true;
-
-        uiManager = GetComponent<UISystem>();
-
-        //questionManager = GameObject.Find("QuestionManager").GetComponent<QuestionManager>();
-        //questionManager.AskLecture();
-        ResumeGame();
-        uiManager.UpdateUIText(gameMoney, healthCount, time);
-        uiManager.CloseGameOverPanel();
-        StartCoroutine("EarnGameMoney");
+        
+        UISystem.Instance.UpdateUIText(gameMoney, time);
+        UISystem.Instance.CloseGameOverPanel();
+        //StartCoroutine("EarnGameMoney");
     }
 
     // Update is called once per frame
     void Update()
     {
-        uiManager.UpdateUIText(gameMoney,healthCount,time);
+        UISystem.Instance.UpdateUIText(gameMoney,time);
         if (time >= 0) 
         {
             Timer();
         }
-        
-    }
-    #region Oyun Bilesenlerine Erisim
-
-    /// <summary>
-    /// Oyun parasini dondurur.
-    /// </summary>
-    /// <returns></returns>
-    public float GetGameMoney()
-    {
-        return gameMoney;
-    }
-    /// <summary>
-    /// Oyun parasini gunceller.
-    /// </summary>
-    /// <param name="money"></param>
-    public void SetGameMoney(float money)
-    {
-        gameMoney= money;
-    }
-    /// <summary>
-    /// Oyuncunun can degerini dondurur.
-    /// </summary>
-    /// <returns></returns>
-    public int GetHealthCount()
-    {
-        return healthCount;
-    }
-    /// <summary>
-    /// Oyuncun can degerini gunceller.
-    /// </summary>
-    /// <param name="health"></param>
-    public void SetHealthCount(int health)
-    {
-        healthCount = health;
-    }
-    /// <summary>
-    /// Dusmanin can degerini getirir.
-    /// </summary>
-    /// <returns></returns>
-    public int GetEnemyHealthCount()
-    {
-        return enemyHealthCount;
-    }
-    /// <summary>
-    /// Dusman canini gunceller.
-    /// </summary>
-    /// <param name="enemyHealth"></param>
-    public void SetEnemyHealthCount(int enemyHealth)
-    {
-        enemyHealthCount = enemyHealth;
-    }
-    
-    #endregion
-
-    /// <summary>
-    /// Oyuncunun canini azaltir.
-    /// </summary>
-    public void DecreasePlayerHealth()
-    {
-        healthCount -= 1;
-        if(healthCount == 0)
-        {
-            GameOver();
-        }
+        GameStatus();
     }
 
-    /// <summary>
-    /// Dusmanin canini azaltir.
-    /// </summary>
-    public void DecreaseEnemyHealth()
+    private void GameStatus()// Oyunun duraklatilmasini kontrol eder.
     {
-        enemyHealthCount -= 1;
-        if(enemyHealthCount == 0)
-        {
-            WinTheGame();
-        }
+        if (isPaused) Time.timeScale = 0; else Time.timeScale = 1;
     }
 
-    /// <summary>
-    /// Oyunu kazandiginda calisir.
-    /// </summary>
-    public void WinTheGame()
+    public void WinGame()// Oyunu kazandiginda calisir.
     {
-        Time.timeScale = 0;
+        isPaused = true;
+        isPlaying = false;
         StopAllCoroutines();
         DestroyStudent();
-        uiManager.ShowGameOverPanel();
+        UISystem.Instance.ShowGameOverPanel();
         Debug.Log("you win");
     }
-    /// <summary>
-    /// Oyunu kaybettiginde calisir.
-    /// </summary>
-    public void GameOver()
+    
+    public void GameOver()// Oyunu kaybettiginde calisir.
     {
+        isPaused =true;
+        isPlaying = false;
         StopAllCoroutines();
         DestroyStudent();
-        uiManager.ShowGameOverPanel();
-        //PauseGame();
+        UISystem.Instance.ShowGameOverPanel();
         Debug.Log("you loose");
     }
 
-    /// <summary>
-    /// Oyunu yeniden baslatir.
-    /// </summary>
-    public void RestartGame()
+    public void RestartGame()// Oyunu yeniden baslatir.
     {
         DestroyStudent();
         ClearMap();
         SceneManager.LoadScene("Game");
     }
     
-    /// <summary>
-    /// Oyundaki geri sayimi kontrol eder.
-    /// </summary>
-    private void Timer()
+    private void Timer()// Oyundaki geri sayimi kontrol eder.
     {
         time -= Time.deltaTime;
 
@@ -169,11 +86,7 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Saniyede bir oyun ekranindaki yildiz parasini arttirir.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator EarnGameMoney()
+    IEnumerator EarnGameMoney()// Saniyede bir oyun ekranindaki yildiz parasini arttirir.
     {
         
         while (true)
@@ -183,12 +96,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Ogrenci maliyeti hesaplar.
-    /// </summary>
-    /// <param name="gameObject"></param>
-    /// <returns></returns>
-    public float StudentCost(GameObject gameObject)
+    public float StudentCost(GameObject gameObject)// Öğrenci maliyeti hesaplar ve değerini döndürür.
     {
         float cost = 0;
         Debug.Log(gameObject.name);
@@ -207,10 +115,7 @@ public class GameManager : MonoBehaviour
         return cost;
     }
 
-    /// <summary>
-    /// Ana menuye doner.
-    /// </summary>
-    public void BackToMainMenu()
+    public void BackToMainMenu()// Ana menuye doner.
     {
         //DestroyStudent();
 
@@ -219,10 +124,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Menu");
     }
     
-    /// <summary>
-    /// Oyun bittikten sonra ogrencileri temizler.
-    /// </summary>
-    public void DestroyStudent()
+    public void DestroyStudent()// Oyun bittikten sonra ogrencileri temizler.
     {
         for (int i = 0; i < Students.students.Count; i++)
         {
@@ -230,28 +132,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Oyunun durdurur.
-    /// </summary>
-    public void PauseGame()
+    public void PauseGame()// Oyunun durdurur.
     {
-        Time.timeScale = 0;
-        uiManager.ShowPausePanel();
+        isPaused = true;
+        UISystem.Instance.ShowPausePanel();
     }
 
-    /// <summary>
-    /// Oyunu devam ettirir.
-    /// </summary>
-    public void ResumeGame()
+    public void ResumeGame()// Oyunu devam ettirir.
     {
-        Time.timeScale = 1;
-        uiManager.ClosePausePanel();
+        isPaused = false;
+        UISystem.Instance.ClosePausePanel();
     }
 
-    /// <summary>
-    /// Haritayi temizler.
-    /// </summary>
-    private void ClearMap()
+    private void ClearMap()// Haritayi temizler.
     {
         MapGenerator.mapTiles.Clear();
         MapGenerator.pathTiles.Clear();

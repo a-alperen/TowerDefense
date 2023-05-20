@@ -9,23 +9,22 @@ using static System.Net.Mime.MediaTypeNames;
 
 public class QuestionManager : MonoBehaviour
 {
-    
+    public static QuestionManager Instance { get;private set; }
+
     // Matematik panel text alanlari
     [Header("Texts")]
     public TMP_InputField answerField;
 
-    private GameManager gameManager;
-    private UISystem uiManager;
-
     private int number1, number2,result;
-    
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
         
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        uiManager = GameObject.Find("GameManager").GetComponent<UISystem>();
-        Time.timeScale = 0;
         AskLecture();
         
     }
@@ -40,28 +39,26 @@ public class QuestionManager : MonoBehaviour
     /// </summary>
     public void AskQuestion()
     {
-        Time.timeScale = 0;
+        GameManager.Instance.isPaused = true;
         if (LectureManager.lecture == "matematik")
         {
-            uiManager.ShowMathQuestionPanel(AskMathQuestion());
-            //Time.timeScale = 0;
+            UISystem.Instance.ShowMathQuestionPanel(AskMathQuestion());
         }
         else if (LectureManager.lecture == "hayatbilgisi")
         {
-            uiManager.ShowQuestionPanel();
-            //Time.timeScale = 0;
+            UISystem.Instance.ShowQuestionPanel();
         }
         else if (LectureManager.lecture == "turkce")
         {
-            uiManager.ShowQuestionPanel();
-            //Time.timeScale = 0;
+            UISystem.Instance.ShowQuestionPanel();
         }
 
     }
 
     public void AskLecture()
     {
-        uiManager.ShowLectureChoosePanel();
+        GameManager.Instance.isPaused = true;
+        UISystem.Instance.ShowLectureChoosePanel();
     }
 
     public string AskMathQuestion()
@@ -128,14 +125,14 @@ public class QuestionManager : MonoBehaviour
                 Debug.Log(playerAnswer);
                 if (playerAnswer == result)
                 {
-                    gameManager.DecreaseEnemyHealth();
+                    Debug.Log("Yühuuuuu!");
                 }
                 else
                 {
-                    gameManager.DecreasePlayerHealth();
+                    Debug.Log("AAAAAAAA!");
                 }
-                uiManager.CloseMathQuestionPanel();
-                Time.timeScale = 1.0f;
+                UISystem.Instance.CloseMathQuestionPanel();
+                GameManager.Instance.isPaused = false;
             }
         }
         catch (ArgumentNullException e)

@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using Unity.VisualScripting;
 
 public class UISystem : MonoBehaviour
 {
+    public static UISystem Instance { get; private set; }
 
     [Header("Texts and InputFields")]
     [SerializeField] private TextMeshProUGUI timeText;
@@ -25,7 +23,10 @@ public class UISystem : MonoBehaviour
     [SerializeField] private GameObject lectureChoosePanel;   // Ders seçim paneli
     [SerializeField] private GameObject warningPanel;         // Uyarı paneli
 
-
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Update()
     {
         ProcessInput();
@@ -42,10 +43,9 @@ public class UISystem : MonoBehaviour
             mathAnswerField.image.color = Color.red;
         }
     }
-    public void UpdateUIText(float gameMoney, int healthCount, float time)
+    public void UpdateUIText(float gameMoney, float time)
     {
         gameMoneyText.text = gameMoney.ToString();
-        healthText.text = healthCount.ToString();
         timeText.text = time.ToString("F1");
     }
 

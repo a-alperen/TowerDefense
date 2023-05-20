@@ -10,8 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7018243660367499065}
   - component: {fileID: 8149350845429132290}
-  - component: {fileID: 65923456}
-  - component: {fileID: 5326668555380035202}
+  - component: {fileID: -6366542912929492217}
   - component: {fileID: 4112219741783933852}
   m_Layer: 6
   m_Name: BasicTower
@@ -88,7 +87,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &65923456
+--- !u!114 &-6366542912929492217
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,31 +96,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 2077783528012917289}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac3e11b35599ed54caa0b8fa873b613d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ae440f67d935b04c96a3d76c6f52c0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   range: 3
   damage: 10
-  timeBetweenShots: 3
-  currentTarget: {fileID: 0}
-  pivot: {fileID: 3757996662986165870}
-  barrel: {fileID: 4636121397945762210}
-  bullet: {fileID: 721721657571991791, guid: 406d003c92dc1d0448ded4d53be9cd11, type: 3}
---- !u!114 &5326668555380035202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2077783528012917289}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fbd4e3fe78bd4d41b59d1489313e2fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pivot: {fileID: 3757996662986165870}
-  barrel: {fileID: 4636121397945762210}
-  tower: {fileID: 65923456}
+  fireRate: 1
+  studentTag: Student
+  partToRotate: {fileID: 3757996662986165870}
+  turnSpeed: 10
+  bulletPrefab: {fileID: 721721657571991791, guid: 406d003c92dc1d0448ded4d53be9cd11, type: 3}
+  firePoint: {fileID: 7023549455604121768}
 --- !u!61 &4112219741783933852
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -172,9 +157,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2086586283354580370}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.35, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.15, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.35000032, y: 0, z: 0}
+  m_LocalScale: {x: 0.6999997, y: 0.15, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3757996662986165870}
@@ -242,7 +227,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3757996662986165870}
   m_Layer: 6
-  m_Name: Pivot
+  m_Name: PartToRotate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -261,6 +246,38 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4636121397945762210}
+  - {fileID: 7023549455604121768}
   m_Father: {fileID: 7018243660367499065}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8512836999324302294
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7023549455604121768}
+  m_Layer: 6
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7023549455604121768
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8512836999324302294}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.761, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3757996662986165870}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
