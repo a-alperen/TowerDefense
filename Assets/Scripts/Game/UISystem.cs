@@ -9,7 +9,6 @@ public class UISystem : MonoBehaviour
     [Header("Texts and InputFields")]
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI gameMoneyText;
-    [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI mathQuestionText;
     [SerializeField] private TMP_InputField mathAnswerField;
     [SerializeField] private TextMeshProUGUI warningPanelText;
@@ -22,6 +21,7 @@ public class UISystem : MonoBehaviour
     [SerializeField] private GameObject mathQuestionPanel;    // Soru paneli(Matematik)
     [SerializeField] private GameObject lectureChoosePanel;   // Ders seçim paneli
     [SerializeField] private GameObject warningPanel;         // Uyarı paneli
+    [SerializeField] private GameObject skillPanel;
 
     private void Awake()
     {
@@ -120,5 +120,12 @@ public class UISystem : MonoBehaviour
         warningPanelText.text = text;
         warningPanel.GetComponent<Image>().color = Color.red;
         warningPanel.GetComponent<Animator>().Play("Warning");
+    }
+    bool anim = true;
+    public void SkillPanelAnim()
+    {   
+        if(anim) skillPanel.GetComponent<Animator>().Play("SkillPanelOpen");
+        else skillPanel.GetComponent<Animator>().Play("SkillPanelClose");
+        anim = !anim;
     }
 }
