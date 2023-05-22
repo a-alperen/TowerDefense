@@ -223,26 +223,12 @@ public class MapGenerator : MonoBehaviour
         startTile.GetComponent<SpriteRenderer>().color = startColor;
         endTile.GetComponent<SpriteRenderer>().color = endColor;
     }
-    
+
     /// <summary>
     /// Haritaya zorluga gore tower ekleme islemini yapar.
     /// </summary>
     /// <param name="difficulty"></param>
-    private void GenerateTower(int difficulty, List<GameObject> towerPlaceTiles)
-    {
-        if (difficulty == 0)
-        {
-            PlaceTower(TowerCount(difficulty), towerPlaceTiles);
-        }
-        else if (difficulty == 1)
-        {
-            PlaceTower(TowerCount(difficulty), towerPlaceTiles);
-        }
-        else if (difficulty == 2)
-        {
-            PlaceTower(TowerCount(difficulty), towerPlaceTiles);
-        }
-    }
+    private void GenerateTower(int difficulty, List<GameObject> towerPlaceTiles) => PlaceTower(TowerCount(difficulty), towerPlaceTiles);
     private void PlaceTower(int towerCount, List<GameObject> towerPlaceTiles)
     {
         List<GameObject> towerTile = new();

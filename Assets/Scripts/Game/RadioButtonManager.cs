@@ -20,10 +20,14 @@ public class RadioButtonManager : MonoBehaviour
         if(toggle.name == "Option1")
         {
             Debug.Log("Dogru bildin!");
+            GameManager.Instance.gameMoney += 50;
+
         }
         else
         {
             Debug.Log("Yanlis bildin!");
+            GameManager.Instance.gameMoney -= 25;
+
         }
     }
 

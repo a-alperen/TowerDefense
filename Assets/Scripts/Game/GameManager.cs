@@ -10,11 +10,14 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("Player Stats")]
+    public Data data;
     public float gameMoney;
     [SerializeField] private float time;
     public int hitCount;
     public bool isPlaying;
     public bool isPaused;
+
+    private const string dataFileName = "PlayerData";
 
     //public GameObject winPanel;
 
@@ -27,7 +30,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        data = SaveSystem.SaveExists(dataFileName)
+               ? SaveSystem.LoadData<Data>(dataFileName)
+               : new Data();
+
         UISystem.Instance.UpdateUIText(gameMoney, time);
         UISystem.Instance.CloseGameOverPanel();
         //StartCoroutine("EarnGameMoney");

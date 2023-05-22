@@ -28,11 +28,6 @@ public class QuestionManager : MonoBehaviour
         AskLecture();
         
     }
-    private void Update()
-    {
-
-    }
-
     
     /// <summary>
     /// Soru paneli ekrani gelir.
@@ -126,10 +121,12 @@ public class QuestionManager : MonoBehaviour
                 if (playerAnswer == result)
                 {
                     Debug.Log("Yühuuuuu!");
+                    GameManager.Instance.gameMoney += 50; 
                 }
                 else
                 {
                     Debug.Log("AAAAAAAA!");
+                    GameManager.Instance.gameMoney -= 25;
                 }
                 UISystem.Instance.CloseMathQuestionPanel();
                 GameManager.Instance.isPaused = false;
