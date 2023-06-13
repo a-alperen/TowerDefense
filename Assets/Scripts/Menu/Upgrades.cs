@@ -16,8 +16,27 @@ public class Upgrades : MonoBehaviour
     public TextMeshProUGUI speedCostText;
     public TextMeshProUGUI rangeCostText;
 
-    public void BuyDamageUpgrade() => MarketManager.Instance.BuyUpgrade("Damage", upgradeId);
-    public void BuyHealthUpgrade() => MarketManager.Instance.BuyUpgrade("Health", upgradeId);
-    public void BuySpeedUpgrade() => MarketManager.Instance.BuyUpgrade("Speed", upgradeId);
-    public void BuyRangeUpgrade() => MarketManager.Instance.BuyUpgrade("Range", upgradeId);
+    public void BuyDamageUpgrade()
+    {
+        MarketManager.Instance.BuyUpgrade("Damage", upgradeId);
+        MarketManager.Instance.UpdateUpgradeUI("Student",upgradeId);
+    }
+
+    public void BuyHealthUpgrade()
+    {
+        MarketManager.Instance.BuyUpgrade("Health", upgradeId);
+        MarketManager.Instance.UpdateUpgradeUI("Student",upgradeId);
+    }
+
+    public void BuySpeedUpgrade()
+    {
+        MarketManager.Instance.BuyUpgrade("Speed", upgradeId);
+        MarketManager.Instance.UpdateUpgradeUI("Student", upgradeId);
+    }
+
+    public void BuyRangeUpgrade()
+    {
+        MarketManager.Instance.BuyUpgrade("Range", upgradeId);
+        MarketManager.Instance.UpdateUpgradeUI("Student", upgradeId);
+    }
 }

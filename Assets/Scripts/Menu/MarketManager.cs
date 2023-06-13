@@ -13,18 +13,19 @@ public class MarketManager : MonoBehaviour
     public UpgradeHandler[] upgradeHandler;
     public TextMeshProUGUI moneyText;
 
-    public float saveTime;
+    public float saveTime = 0f;
     // Update is called once per frame
     void Update()
     {
-        moneyText.text = $"{data.money:0}";
+        moneyText.text = $"{data.marketGold:0}";
 
         saveTime += Time.deltaTime * (1 / Time.timeScale);
         if (saveTime >= 5)
         {
             SaveSystem.SaveData(data, dataFileName);
             saveTime = 0;
-        }   
+        }
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -40,17 +41,7 @@ public class MarketManager : MonoBehaviour
             {1.82f, 1.82f, 1.82f, 1.82f },
             {1.719f, 1.719f, 1.585f, 1.585f}
         };
-        upgradeHandler[0].UpgradesPowerMultiplier = new float[,]
-        {
-            { 1.38f, 1.38f, 1.15f, 1.085f },
-            { 1.38f, 1.38f, 1.15f, 1.06f },
-            {1.38f, 1.38f, 1.15f, 1.06f}
-        };
-        upgradeHandler[0].UpgradesPower = new float[,] { 
-            { 10 * Mathf.Pow( upgradeHandler[0].UpgradesCostMultiplier[0,0] ,data.upgradeLevels[0][0]), 100 * Mathf.Pow( upgradeHandler[0].UpgradesCostMultiplier[0,1] ,data.upgradeLevels[0][1]), 1 * Mathf.Pow(upgradeHandler[0].UpgradesCostMultiplier[0, 2], data.upgradeLevels[0][2]), 2f * Mathf.Pow(upgradeHandler[0].UpgradesCostMultiplier[0, 3], data.upgradeLevels[0][3]) },
-            { 20, 50, 1.5f, 3f },
-            { 50, 250, 0.5f, 1.5f } 
-        };
+        
         upgradeHandler[0].UpgradesCost = new float[,] { 
             { 250, 250, 1000, 1000 },
             { 500, 500, 2000, 2000 },
@@ -71,6 +62,7 @@ public class MarketManager : MonoBehaviour
         }
 
         UpdateUpgradeUI("Student");
+        
     }
     public void UpdateUpgradeUI(string type, int upgradeId = -1)
     {
@@ -90,14 +82,20 @@ public class MarketManager : MonoBehaviour
                 for (int i = 0; i < upgradeHandler[index].Upgrades.Count; i++)
                     UpdateUI(i);
             else UpdateUI(upgradeId);
-
+            
             void UpdateUI(int id)
             {
+                
                 upgrades[id].nameText.text = upgradeNames[id];
-                upgrades[id].damageText.text = $"Hasar: {upgradeHandler[0].UpgradesPower[id, 0]:0} -> {upgradeHandler[0].UpgradesPower[id, 0] * upgradeHandler[0].UpgradesPowerMultiplier[id, 0]:0}";
-                upgrades[id].healthText.text = $"Can: {upgradeHandler[0].UpgradesPower[id, 1]:0} -> {upgradeHandler[0].UpgradesPower[id, 1] * upgradeHandler[0].UpgradesPowerMultiplier[id, 1]:0}";
-                upgrades[id].speedText.text = $"Hız: {upgradeHandler[0].UpgradesPower[id, 2]:0.0} -> {upgradeHandler[0].UpgradesPower[id, 2] * upgradeHandler[0].UpgradesPowerMultiplier[id, 2]:0.0}";
-                upgrades[id].rangeText.text = $"Menzil: {upgradeHandler[0].UpgradesPower[id, 3]:0.0} -> {upgradeHandler[0].UpgradesPower[id, 3] * upgradeHandler[0].UpgradesPowerMultiplier[id, 3]:0.0}";
+                
+                upgrades[id].damageText.text = $"Hasar: {data.upgradePowers[id][0]:0} -> {data.upgradePowers[id][0] * data.powerMultiplier[id][0]:0}";
+                
+                upgrades[id].healthText.text = $"Can: {data.upgradePowers[id][1]:0} -> {data.upgradePowers[id][1] * data.powerMultiplier[id][1]:0}";
+                
+                upgrades[id].speedText.text = $"Hız: {data.upgradePowers[id][2]:0.0} -> {data.upgradePowers[id][2] * data.powerMultiplier[id][2]:0.0}";
+                
+                upgrades[id].rangeText.text = $"Menzil: {data.upgradePowers[id][3]:0.0} -> {data.upgradePowers[id][3] * data.powerMultiplier[id][3]:0.0}";
+                
                 upgrades[id].damageCostText.text = $"{UpgradeCost("Damage",id):0}";
                 upgrades[id].healthCostText.text = $"{UpgradeCost("Health", id):0}";
                 upgrades[id].speedCostText.text = $"{UpgradeCost("Speed", id):0}";
@@ -127,29 +125,38 @@ public class MarketManager : MonoBehaviour
         switch (type)
         {
             case "Damage":
-                Buy(data.upgradeLevels[upgradeId], 0);
+                Buy(data.upgradeLevels[upgradeId], data.upgradePowers[upgradeId], data.powerMultiplier[upgradeId], 0);
                 break;
             case "Health":
-                Buy(data.upgradeLevels[upgradeId], 1);
+                Buy(data.upgradeLevels[upgradeId], data.upgradePowers[upgradeId], data.powerMultiplier[upgradeId], 1);
                 break;
             case "Speed":
-                Buy(data.upgradeLevels[upgradeId], 2);
+                Buy(data.upgradeLevels[upgradeId], data.upgradePowers[upgradeId], data.powerMultiplier[upgradeId], 2);
                 break;
             case "Range":
-                Buy(data.upgradeLevels[upgradeId], 3);
+                Buy(data.upgradeLevels[upgradeId], data.upgradePowers[upgradeId], data.powerMultiplier[upgradeId], 3);
                 break;
             default:
                 break;
         }
-        void Buy(List<int> upgrades, int index)
+        void Buy(List<int> upgrades,List<float> upgradePowers,List<float> powerMultiplier, int index)
         {
-            if (data.money >= UpgradeCost(type, upgradeId))
+            if (data.marketGold >= UpgradeCost(type, upgradeId))
             {
-                data.money -= UpgradeCost(type, upgradeId);
+                data.marketGold -= UpgradeCost(type, upgradeId);
+                upgradePowers[index] *= powerMultiplier[index];
                 upgrades[index] += 1;
 
             }
             UpdateUpgradeUI("Student", upgradeId);
         }
+    }
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause) { SaveSystem.SaveData(data,dataFileName); }
+    }
+    private void OnApplicationQuit()
+    {
+        SaveSystem.SaveData(data,dataFileName);
     }
 }

@@ -31,7 +31,7 @@ public class TowerBullet : MonoBehaviour
     void HitTarget()
     {
         if (target == null) return;
-        if(GameManager.Instance.hitCount % 6 == 0)
+        if (GameManager.Instance.hitCount % 6 == 0)
         {
             if (QuestionManager.Instance != null)
             {

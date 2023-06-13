@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8762153894463108153}
   - component: {fileID: 9097361773815090267}
   m_Layer: 0
-  m_Name: Student
+  m_Name: NormalStudent
   m_TagString: Student
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,12 +129,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 278399c250b08b84c80596b7671d9a8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startHealth: 50
+  id: 0
   health: 0
+  startHealth: 50
   speed: 1
   range: 2.5
   fireRate: 1
-  healthBarOffset: {x: 0, y: 1, z: 0}
+  healthBarOffset: {x: 0, y: 1.3, z: 0}
   healthBarGo: {fileID: 754171473840097222}
   bulletPrefab: {fileID: 8774105254524669447, guid: 2b8b0013c955f754fa082d9d77e00ddd, type: 3}
   firePoint: {fileID: 5091641143795082363}
@@ -479,7 +480,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5823325317836505299, guid: bddb5773cfd3a1743b529662768d1d7d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1.37
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 5823325317836505299, guid: bddb5773cfd3a1743b529662768d1d7d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

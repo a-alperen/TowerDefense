@@ -11,8 +11,6 @@ public class UpgradeHandler : MonoBehaviour
     public Transform UpgradesPanel;
 
     public string[] UpgradesNames;
-    public float[,] UpgradesPower;
     public float[,] UpgradesCost;
     public float[,] UpgradesCostMultiplier;
-    public float[,] UpgradesPowerMultiplier;
 }

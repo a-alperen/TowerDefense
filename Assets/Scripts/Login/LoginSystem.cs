@@ -49,7 +49,7 @@ public class LoginSystem : MonoBehaviour
     /// <returns></returns>
     IEnumerator Login()
     {
-        WWWForm form = new WWWForm();
+        WWWForm form = new();
         form.AddField("unity", "girisYapma");
         form.AddField("username", loginUsername.text);
         form.AddField("password", loginPassword.text);

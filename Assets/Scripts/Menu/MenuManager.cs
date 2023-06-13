@@ -3,22 +3,25 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
-    
-    public GameObject marketPanel;
 
     public void StartGame()
     {
+        SaveSystem.SaveData(MarketManager.Instance.data, "PlayerStats");
         SceneManager.LoadScene("Game");
     }
 
-    public void ExitMarket()
+    public void HidePanel(GameObject panel)
     {
-        marketPanel.SetActive(false);
+        panel.SetActive(false);
     }
 
-    public void EnterMarket()
+    public void ShowPanel(GameObject panel)
     {
-        marketPanel.SetActive(true);
+        panel.SetActive(true);
     }
-
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+    
 }

@@ -93,6 +93,9 @@ public class Tower : MonoBehaviour
     }
     private void Die()
     {
+        GameManager.Instance.score += Random.Range(25, 101);
+        GameManager.Instance.gold += Random.Range(25, 51);
+        GameManager.Instance.gameMoney += 50;
         Towers.towers.Remove(gameObject);
         Destroy(transform.gameObject);
     }

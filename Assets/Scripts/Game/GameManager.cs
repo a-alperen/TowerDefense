@@ -16,8 +16,12 @@ public class GameManager : MonoBehaviour
     public int hitCount;
     public bool isPlaying;
     public bool isPaused;
-
-    private const string dataFileName = "PlayerData";
+    public int correctCount;
+    public int wrongCount;
+    public int gold;
+    public int score;
+    
+    private const string dataFileName = "PlayerStats";
 
     //public GameObject winPanel;
 
@@ -26,15 +30,17 @@ public class GameManager : MonoBehaviour
         Instance = this;
         isPaused = false;
         isPlaying = true;
+        correctCount = 0;
+        wrongCount = 0;
+        gold = 0;
+        score = 0;
     }
     // Start is called before the first frame update
     void Start()
     {
-        data = SaveSystem.SaveExists(dataFileName)
-               ? SaveSystem.LoadData<Data>(dataFileName)
-               : new Data();
+        data = SaveSystem.LoadData<Data>(dataFileName);
 
-        UISystem.Instance.UpdateUIText(gameMoney, time);
+        UISystem.Instance.UpdateUIText(gameMoney, time, correctCount, wrongCount, score, gold);
         UISystem.Instance.CloseGameOverPanel();
         //StartCoroutine("EarnGameMoney");
     }
@@ -42,14 +48,23 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UISystem.Instance.UpdateUIText(gameMoney,time);
-        if (time >= 0) 
-        {
-            Timer();
-        }
+        UISystem.Instance.UpdateUIText(gameMoney, time, correctCount, wrongCount, score, gold);
         GameStatus();
+        Timer();
+        
     }
 
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            SaveSystem.SaveData(data,dataFileName);
+        }
+    }
+    private void OnApplicationQuit()
+    {
+        SaveSystem.SaveData(data, dataFileName);
+    }
     private void GameStatus()// Oyunun duraklatilmasini kontrol eder.
     {
         if (isPaused) Time.timeScale = 0; else Time.timeScale = 1;
@@ -57,26 +72,29 @@ public class GameManager : MonoBehaviour
 
     public void WinGame()// Oyunu kazandiginda calisir.
     {
+        SaveGameData();
         isPaused = true;
         isPlaying = false;
         StopAllCoroutines();
         DestroyStudent();
-        UISystem.Instance.ShowGameOverPanel();
+        UISystem.Instance.ShowGameOverPanel("OYUNU KAZANDIN",score,gold,correctCount,wrongCount);
         Debug.Log("you win");
     }
     
     public void GameOver()// Oyunu kaybettiginde calisir.
     {
+        SaveGameData();
         isPaused =true;
         isPlaying = false;
         StopAllCoroutines();
         DestroyStudent();
-        UISystem.Instance.ShowGameOverPanel();
+        UISystem.Instance.ShowGameOverPanel("OYUNU KAYBETTİN",score,gold,correctCount,wrongCount);
         Debug.Log("you loose");
     }
 
     public void RestartGame()// Oyunu yeniden baslatir.
     {
+        SaveSystem.SaveData(data, dataFileName);
         DestroyStudent();
         ClearMap();
         SceneManager.LoadScene("Game");
@@ -84,14 +102,41 @@ public class GameManager : MonoBehaviour
     
     private void Timer()// Oyundaki geri sayimi kontrol eder.
     {
-        time -= Time.deltaTime;
-
-        if(time <= 0)
+        
+        if (time >= 0)
         {
-            GameOver();
+            time -= Time.deltaTime;
         }
+        else GameOver();
     }
     
+    private void SaveGameData()
+    {
+        if (data.highGold < gold) data.highGold = gold;
+        if (data.highScore < score) data.highScore = score;
+        data.totalGold += gold;
+        data.totalScore += score;
+        data.marketGold += gold;
+
+        switch (LectureManager.lecture)
+        {
+            case "hayatbilgisi":
+                data.correctAnswers[0] += correctCount;
+                data.wrongAnswers[0] += wrongCount;
+                break;
+            case "turkce":
+                data.correctAnswers[1] += correctCount;
+                data.wrongAnswers[1] += wrongCount;
+                break;
+            case "matematik":
+                data.correctAnswers[2] += correctCount;
+                data.wrongAnswers[2] += wrongCount;
+                break;
+            default:
+                break;
+        }
+        
+    }
     IEnumerator EarnGameMoney()// Saniyede bir oyun ekranindaki yildiz parasini arttirir.
     {
         
@@ -106,15 +151,15 @@ public class GameManager : MonoBehaviour
     {
         float cost = 0;
         Debug.Log(gameObject.name);
-        if (gameObject.name == "Student")
+        if (gameObject.name == "NormalStudent")
         {
             cost = 25;
         }
-        else if(gameObject.name == "LazyStudent")
+        else if(gameObject.name == "FastStudent")
         {
             cost = 50;
         }
-        else if (gameObject.name == "HardworkingStudent")
+        else if (gameObject.name == "TankStudent")
         {
             cost= 100;
         }
@@ -123,8 +168,7 @@ public class GameManager : MonoBehaviour
 
     public void BackToMainMenu()// Ana menuye doner.
     {
-        //DestroyStudent();
-
+        SaveSystem.SaveData(data, dataFileName);
         isPlaying = false;
         ClearMap();
         SceneManager.LoadScene("Menu");

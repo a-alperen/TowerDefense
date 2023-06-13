@@ -121,12 +121,17 @@ public class QuestionManager : MonoBehaviour
                 if (playerAnswer == result)
                 {
                     Debug.Log("Yühuuuuu!");
-                    GameManager.Instance.gameMoney += 50; 
+                    GameManager.Instance.gameMoney += 50;
+                    GameManager.Instance.gold += UnityEngine.Random.Range(100,150);
+                    GameManager.Instance.score += UnityEngine.Random.Range(100, 500);
+                    GameManager.Instance.correctCount++;
                 }
                 else
                 {
                     Debug.Log("AAAAAAAA!");
-                    GameManager.Instance.gameMoney -= 25;
+                    if(GameManager.Instance.gameMoney -25 >= 0) GameManager.Instance.gameMoney -= 25;
+                    GameManager.Instance.score -= 100;
+                    GameManager.Instance.wrongCount++;
                 }
                 UISystem.Instance.CloseMathQuestionPanel();
                 GameManager.Instance.isPaused = false;

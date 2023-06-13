@@ -21,12 +21,17 @@ public class RadioButtonManager : MonoBehaviour
         {
             Debug.Log("Dogru bildin!");
             GameManager.Instance.gameMoney += 50;
+            GameManager.Instance.gold += UnityEngine.Random.Range(100, 150);
+            GameManager.Instance.score += UnityEngine.Random.Range(100, 500);
+            GameManager.Instance.correctCount += 1;
 
         }
         else
         {
             Debug.Log("Yanlis bildin!");
-            GameManager.Instance.gameMoney -= 25;
+            if (GameManager.Instance.gameMoney - 25 >= 0) GameManager.Instance.gameMoney -= 25;
+            GameManager.Instance.score -= 100;
+            GameManager.Instance.wrongCount += 1;
 
         }
     }

@@ -6,10 +6,11 @@ public class Student : MonoBehaviour
     private Transform currentTarget;
 
     [Header("Attributes")]
-    [SerializeField] private float startHealth;
+    public int id;
     [SerializeField] private float health;
-    [SerializeField] private float speed;
-    [SerializeField] private float range;
+    public float startHealth;
+    public float speed;
+    public float range;
     [SerializeField] private float fireRate = 1f;
     private float fireCountDown = 0f;
 
@@ -61,6 +62,7 @@ public class Student : MonoBehaviour
     }
     private void InitializeStudent()
     {
+
         health = startHealth;
         targetTile = MapGenerator.pathTiles[0];
         
@@ -132,7 +134,7 @@ public class Student : MonoBehaviour
             if ((transform.position - MapGenerator.endTile.transform.position).magnitude < 0.001f)
             {
                 Die();
-                UISystem.Instance.ShowGameOverPanel();
+                GameManager.Instance.WinGame();
             }
         }
         
@@ -141,8 +143,7 @@ public class Student : MonoBehaviour
     void Shoot()
     {
         GameObject bulletGO = (GameObject)Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        StudentBullet bullet = bulletGO.GetComponent<StudentBullet>();
-        if (bullet != null)
+        if (bulletGO.TryGetComponent<StudentBullet>(out var bullet))
         {
             bullet.Seek(currentTarget);
         }

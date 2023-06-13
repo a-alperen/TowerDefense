@@ -6,12 +6,22 @@ public class UISystem : MonoBehaviour
 {
     public static UISystem Instance { get; private set; }
 
-    [Header("Texts and InputFields")]
+    [Header("Stat Panel Texts")]
     [SerializeField] private TextMeshProUGUI timeText;
+    [SerializeField] private TextMeshProUGUI statsCorrectText;
+    [SerializeField] private TextMeshProUGUI statsWrongText;
+    [SerializeField] private TextMeshProUGUI statsScoreText;
+    [SerializeField] private TextMeshProUGUI statsGoldText;
+    [Header("Game Over Panel Texts")]
+    [SerializeField] private TextMeshProUGUI titleText;         
+    [SerializeField] private TextMeshProUGUI scoreText;         
+    [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private TextMeshProUGUI correctText;
+    [SerializeField] private TextMeshProUGUI wrongText;
+    [Header("Other Texts")]
     [SerializeField] private TextMeshProUGUI gameMoneyText;
     [SerializeField] private TextMeshProUGUI mathQuestionText;
     [SerializeField] private TMP_InputField mathAnswerField;
-    [SerializeField] private TextMeshProUGUI warningPanelText;
 
     [Header("Panels")]
     [SerializeField] private GameObject gameOverPanel;        // Oyun bitince açılan panel
@@ -20,7 +30,6 @@ public class UISystem : MonoBehaviour
     [SerializeField] private GameObject questionPanel;        // Soru paneli(Türkçe, hayat bilgisi)
     [SerializeField] private GameObject mathQuestionPanel;    // Soru paneli(Matematik)
     [SerializeField] private GameObject lectureChoosePanel;   // Ders seçim paneli
-    [SerializeField] private GameObject warningPanel;         // Uyarı paneli
     [SerializeField] private GameObject skillPanel;
 
     private void Awake()
@@ -43,10 +52,14 @@ public class UISystem : MonoBehaviour
             mathAnswerField.image.color = Color.red;
         }
     }
-    public void UpdateUIText(float gameMoney, float time)
+    public void UpdateUIText(float gameMoney, float time,int correctCount,int wrongCount,int score,int gold)
     {
         gameMoneyText.text = gameMoney.ToString();
         timeText.text = time.ToString("F1");
+        statsCorrectText.text = $"Doğru: {correctCount}";
+        statsWrongText.text = $"Yanlış: {wrongCount}";
+        statsScoreText.text = $"Skor: {score}";
+        statsGoldText.text = $"Altın: {gold}";
     }
 
     public void UpdateUIText(float gameMoney)
@@ -54,8 +67,13 @@ public class UISystem : MonoBehaviour
         gameMoneyText.text = gameMoney.ToString();
     }
 
-    public void ShowGameOverPanel()
+    public void ShowGameOverPanel(string title,int score,int gold,int correctCount,int wrongCount)
     {
+        titleText.text = title;
+        scoreText.text = $"Skorun: {score}";
+        goldText.text = $"Altının: {gold}";
+        correctText.text = $"Doğru Cevabın: {correctCount}";
+        wrongText.text = $"Yanlış Cevabın: {wrongCount}";
         gameOverPanel.SetActive(true);
     }
 
@@ -115,12 +133,6 @@ public class UISystem : MonoBehaviour
         lectureChoosePanel.SetActive(false);
     }
 
-    public void ShowWarningPanel(string text)
-    {
-        warningPanelText.text = text;
-        warningPanel.GetComponent<Image>().color = Color.red;
-        warningPanel.GetComponent<Animator>().Play("Warning");
-    }
     bool anim = true;
     public void SkillPanelAnim()
     {   
