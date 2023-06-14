@@ -75,7 +75,7 @@ public class RegisterSystem : MonoBehaviour
         form.AddField("password", registerPassword.text);
 
 
-        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/UserRegister", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/UserRegister.php", form))
         {
             yield return www.SendWebRequest();
 
