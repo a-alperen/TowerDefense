@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -18,7 +18,7 @@ public class SaveSystem : MonoBehaviour
 
         if (SaveCount % 5 == 0) Save(BackUpSavePath);
         Save(SavePath);
-
+        Debug.Log("Local kayıt yapıldı.");
         SaveCount++;
 
         void Save(string path)
@@ -41,6 +41,7 @@ public class SaveSystem : MonoBehaviour
         T dataToReturn;
 
         Load(SavePath);
+        Debug.Log("Localden veri geldi.");
         if (backUpNeeded) Load(BackUpSavePath);
 
         return dataToReturn;

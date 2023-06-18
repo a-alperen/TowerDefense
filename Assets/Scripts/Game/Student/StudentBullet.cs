@@ -33,7 +33,6 @@ public class StudentBullet : MonoBehaviour
     {
         if (target == null) return;
         target.GetComponent<Tower>().TakeDamage(damage);
-        Debug.Log("hitttt");
         Destroy(gameObject);
     }
 }

@@ -21,8 +21,7 @@ public class GameManager : MonoBehaviour
     public int gold;
     public int score;
     
-    private const string dataFileName = "PlayerStats";
-
+    private DatabaseConnection connection;
     //public GameObject winPanel;
 
     private void Awake()
@@ -38,8 +37,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        data = SaveSystem.LoadData<Data>(dataFileName);
-
+        data = new Data();
+        connection = GetComponent<DatabaseConnection>();
+        StartCoroutine(connection.GetUserData(PlayerPrefs.GetString("username"), data));
         UISystem.Instance.UpdateUIText(gameMoney, time, correctCount, wrongCount, score, gold);
         UISystem.Instance.CloseGameOverPanel();
         //StartCoroutine("EarnGameMoney");
@@ -54,17 +54,6 @@ public class GameManager : MonoBehaviour
         
     }
 
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause)
-        {
-            SaveSystem.SaveData(data,dataFileName);
-        }
-    }
-    private void OnApplicationQuit()
-    {
-        SaveSystem.SaveData(data, dataFileName);
-    }
     private void GameStatus()// Oyunun duraklatilmasini kontrol eder.
     {
         if (isPaused) Time.timeScale = 0; else Time.timeScale = 1;
@@ -72,34 +61,62 @@ public class GameManager : MonoBehaviour
 
     public void WinGame()// Oyunu kazandiginda calisir.
     {
-        SaveGameData();
-        isPaused = true;
-        isPlaying = false;
-        StopAllCoroutines();
-        DestroyStudent();
-        UISystem.Instance.ShowGameOverPanel("OYUNU KAZANDIN",score,gold,correctCount,wrongCount);
-        Debug.Log("you win");
+        StartCoroutine(Win());
+
+        IEnumerator Win()
+        {
+            yield return null;
+            ClearMap();
+            isPlaying = false;
+            isPaused = true;
+            StopAllCoroutines();
+            SaveGameData(data);
+            UISystem.Instance.ShowGameOverPanel("OYUNU KAZANDIN", score, gold, correctCount, wrongCount);
+            Debug.Log("you win");
+        }
     }
     
     public void GameOver()// Oyunu kaybettiginde calisir.
     {
-        SaveGameData();
-        isPaused =true;
-        isPlaying = false;
-        StopAllCoroutines();
-        DestroyStudent();
-        UISystem.Instance.ShowGameOverPanel("OYUNU KAYBETTİN",score,gold,correctCount,wrongCount);
-        Debug.Log("you loose");
+        StartCoroutine(Loose());
+
+        IEnumerator Loose()
+        {
+            yield return null;
+            ClearMap();
+            isPlaying = false;
+            isPaused = true;
+            StopAllCoroutines();
+            SaveGameData(data);
+            UISystem.Instance.ShowGameOverPanel("OYUNU KAYBETTİN", score, gold, correctCount, wrongCount);
+            Debug.Log("you loose");
+        }
     }
 
     public void RestartGame()// Oyunu yeniden baslatir.
     {
-        SaveSystem.SaveData(data, dataFileName);
-        DestroyStudent();
-        ClearMap();
-        SceneManager.LoadScene("Game");
+        StartCoroutine(Restart());
+
+        IEnumerator Restart()
+        {
+            ClearMap();
+            yield return StartCoroutine(connection.SetData(PlayerPrefs.GetString("username"), data));
+            yield return SceneManager.LoadSceneAsync("Game");
+
+        }
     }
-    
+    public void BackToMainMenu()// Ana menuye doner.
+    {
+        StartCoroutine(LoadMenu());
+
+        IEnumerator LoadMenu()
+        {
+            isPlaying = false;
+            ClearMap();
+            yield return StartCoroutine(connection.SetData(PlayerPrefs.GetString("username"), data));
+            yield return SceneManager.LoadSceneAsync("Menu");
+        }
+    }
     private void Timer()// Oyundaki geri sayimi kontrol eder.
     {
         
@@ -110,7 +127,7 @@ public class GameManager : MonoBehaviour
         else GameOver();
     }
     
-    private void SaveGameData()
+    private void SaveGameData(Data data)
     {
         if (data.highGold < gold) data.highGold = gold;
         if (data.highScore < score) data.highScore = score;
@@ -135,7 +152,6 @@ public class GameManager : MonoBehaviour
             default:
                 break;
         }
-        
     }
     IEnumerator EarnGameMoney()// Saniyede bir oyun ekranindaki yildiz parasini arttirir.
     {
@@ -147,33 +163,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public float StudentCost(GameObject gameObject)// Öğrenci maliyeti hesaplar ve değerini döndürür.
-    {
-        float cost = 0;
-        Debug.Log(gameObject.name);
-        if (gameObject.name == "NormalStudent")
-        {
-            cost = 25;
-        }
-        else if(gameObject.name == "FastStudent")
-        {
-            cost = 50;
-        }
-        else if (gameObject.name == "TankStudent")
-        {
-            cost= 100;
-        }
-        return cost;
-    }
-
-    public void BackToMainMenu()// Ana menuye doner.
-    {
-        SaveSystem.SaveData(data, dataFileName);
-        isPlaying = false;
-        ClearMap();
-        SceneManager.LoadScene("Menu");
-    }
-    
     public void DestroyStudent()// Oyun bittikten sonra ogrencileri temizler.
     {
         for (int i = 0; i < Students.students.Count; i++)

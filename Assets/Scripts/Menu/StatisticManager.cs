@@ -1,3 +1,4 @@
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -18,15 +19,8 @@ public class StatisticManager : MonoBehaviour
     [Header("Math Panel Texts")]
     [SerializeField] TextMeshProUGUI mathCorrectText;
     [SerializeField] TextMeshProUGUI mathWrongText;
-    Data data;
-    private void Start()
-    {
-        data = SaveSystem.SaveExists("PlayerStats")
-               ? SaveSystem.LoadData<Data>("PlayerStats")
-               : new Data();
-        InvokeRepeating(nameof(UpdateTexts), 0, 5f);
-    }
-    public void UpdateTexts()
+    
+    public IEnumerator UpdateTexts(Data data)
     {
         allScoreText.text = $"{data.totalScore:0}";
         allGoldText.text = $"{data.totalGold:0}";
@@ -39,5 +33,7 @@ public class StatisticManager : MonoBehaviour
         mathCorrectText.text = $"{data.correctAnswers[2]:0}";
         mathWrongText.text = $"{data.wrongAnswers[2]:0}";
 
+        Debug.Log("İstatistikler güncellendi.");
+        yield return null;
     }
 }

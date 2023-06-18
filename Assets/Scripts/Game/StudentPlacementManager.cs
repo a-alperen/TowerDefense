@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,10 +12,9 @@ public class StudentPlacementManager : MonoBehaviour
     }
     public void SpawnStudent(GameObject studentObject)
     {
-        float cost = GameManager.Instance.StudentCost(studentObject);
+        float cost = StudentCost(studentObject);
         float gameMoney = GameManager.Instance.gameMoney;
-        Debug.Log(gameMoney);
-        Debug.Log(cost);
+
         if (gameMoney >= cost)
         {
             GameObject studentGO = Instantiate(studentObject, mapGenerator.GetComponent<MapGenerator>().spawnPoint.transform.position, Quaternion.identity);
@@ -27,10 +26,26 @@ public class StudentPlacementManager : MonoBehaviour
             
             Students.students.Add(studentGO);
             gameMoney -= cost;
-            Debug.Log(gameMoney);
             GameManager.Instance.gameMoney = gameMoney;
             UISystem.Instance.UpdateUIText(gameMoney);
         }
-        
+
+        float StudentCost(GameObject gameObject)// Öğrenci maliyeti hesaplar ve değerini döndürür.
+        {
+            float cost = 0;
+            if (gameObject.name == "NormalStudent")
+            {
+                cost = 25;
+            }
+            else if (gameObject.name == "FastStudent")
+            {
+                cost = 50;
+            }
+            else if (gameObject.name == "TankStudent")
+            {
+                cost = 100;
+            }
+            return cost;
+        }
     }
 }

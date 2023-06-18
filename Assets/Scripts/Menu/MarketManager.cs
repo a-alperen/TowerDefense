@@ -8,32 +8,28 @@ public class MarketManager : MonoBehaviour
     public static MarketManager Instance { get; private set; }
     private void Awake() => Instance = this;
 
-    private const string dataFileName = "PlayerStats";
     public Data data;
     public UpgradeHandler[] upgradeHandler;
     public TextMeshProUGUI moneyText;
 
-    public float saveTime = 0f;
+    private StatisticManager statisticManager;
+    //private readonly float saveTime = 30f;
+
+    private DatabaseConnection connection;
     // Update is called once per frame
     void Update()
     {
         moneyText.text = $"{data.marketGold:0}";
 
-        saveTime += Time.deltaTime * (1 / Time.timeScale);
-        if (saveTime >= 5)
-        {
-            SaveSystem.SaveData(data, dataFileName);
-            saveTime = 0;
-        }
-        
     }
     // Start is called before the first frame update
     void Start()
     {
-        data = SaveSystem.SaveExists(dataFileName)
-               ? SaveSystem.LoadData<Data>(dataFileName)
-               : new Data();
 
+        statisticManager = GetComponent<StatisticManager>();
+        connection = GetComponent<DatabaseConnection>();
+        data = new Data();
+        StartCoroutine(Initiliaze());
         upgradeHandler[0].UpgradesNames = new string[] { "Sıradan Öğrenci", "Hızlı Öğrenci", "Tank Öğrenci" };
         upgradeHandler[0].UpgradesCostMultiplier = new float[,]
         {
@@ -60,8 +56,12 @@ public class MarketManager : MonoBehaviour
             }
             upgradeHandler[index].UpgradesScroll.normalizedPosition = Vector3.zero;
         }
-
-        UpdateUpgradeUI("Student");
+        IEnumerator Initiliaze()
+        {
+            yield return StartCoroutine(connection.GetUserData(PlayerPrefs.GetString("username"), data));
+            yield return StartCoroutine(statisticManager.UpdateTexts(data));
+            UpdateUpgradeUI("Student");
+        }
         
     }
     public void UpdateUpgradeUI(string type, int upgradeId = -1)
@@ -151,12 +151,5 @@ public class MarketManager : MonoBehaviour
             UpdateUpgradeUI("Student", upgradeId);
         }
     }
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause) { SaveSystem.SaveData(data,dataFileName); }
-    }
-    private void OnApplicationQuit()
-    {
-        SaveSystem.SaveData(data,dataFileName);
-    }
+    
 }

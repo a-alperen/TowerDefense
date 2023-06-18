@@ -1,15 +1,25 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
-
+    DatabaseConnection connection;
+    private void Start()
+    {
+        connection = GetComponent<DatabaseConnection>();
+    }
     public void StartGame()
     {
-        SaveSystem.SaveData(MarketManager.Instance.data, "PlayerStats");
-        SceneManager.LoadScene("Game");
-    }
+        StartCoroutine(LoadGame());
 
+        IEnumerator LoadGame()
+        {
+            yield return connection.SetData(PlayerPrefs.GetString("username"), MarketManager.Instance.data);
+            yield return SceneManager.LoadSceneAsync("Game");
+        }
+    }
+    
     public void HidePanel(GameObject panel)
     {
         panel.SetActive(false);
@@ -21,7 +31,13 @@ public class MenuManager : MonoBehaviour
     }
     public void ExitGame()
     {
-        Application.Quit();
+        StartCoroutine(Exit());
+
+        IEnumerator Exit()
+        {
+            yield return connection.SetData(PlayerPrefs.GetString("username"), MarketManager.Instance.data);
+            Application.Quit();
+        }
     }
     
 }

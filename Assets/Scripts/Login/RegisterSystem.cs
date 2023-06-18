@@ -21,6 +21,7 @@ public class RegisterSystem : MonoBehaviour
     void Start()
     {
         uiManager = GetComponent<UIManager>();
+        
     }
 
 
@@ -58,7 +59,7 @@ public class RegisterSystem : MonoBehaviour
 
                 
                 Debug.Log("Veri tabanına bağlanıldı.");
-                StartCoroutine(Register());
+                StartCoroutine(Register(registerUsername.text,registerPassword.text));
 
                 ClearUI();
                 
@@ -67,15 +68,15 @@ public class RegisterSystem : MonoBehaviour
 
     }
 
-    IEnumerator Register()
+    IEnumerator Register(string username, string password)
     {
-        WWWForm form = new WWWForm();
+        WWWForm form = new();
         form.AddField("unity", "kayitOlma");
-        form.AddField("username", registerUsername.text);
-        form.AddField("password", registerPassword.text);
+        form.AddField("username", username);
+        form.AddField("password", password);
 
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://192.168.1.37/TowerDefense/UserRegister.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/UserRegister.php", form))
         {
             www.certificateHandler = new CertificateWhore();
             yield return www.SendWebRequest();
@@ -87,7 +88,7 @@ public class RegisterSystem : MonoBehaviour
             else
             {
                 Debug.Log("Sorgu sonucu:" + www.downloadHandler.text);
-                uiManager.ShowWarningPanel(www.downloadHandler.text, Color.red);
+                uiManager.ShowWarningPanel(www.downloadHandler.text, Color.green);
             }
         }
     }

@@ -14,7 +14,6 @@ public class LoginSystem : MonoBehaviour
     public TMP_InputField loginPassword;
 
     private string warningText;
-    
 
     UIManager uiManager;
 
@@ -36,7 +35,7 @@ public class LoginSystem : MonoBehaviour
         {
             //Veri tabanı bağlantısı
 
-            StartCoroutine(Login());
+            StartCoroutine(Login(loginUsername.text,loginPassword.text));
             ClearUI();
             
         }
@@ -47,14 +46,14 @@ public class LoginSystem : MonoBehaviour
     /// Veri tabanına bağlanır.
     /// </summary>
     /// <returns></returns>
-    IEnumerator Login()
+    IEnumerator Login(string username, string password)
     {
         WWWForm form = new();
         form.AddField("unity", "girisYapma");
-        form.AddField("username", loginUsername.text);
-        form.AddField("password", loginPassword.text);
-
-        using (UnityWebRequest www = UnityWebRequest.Post("https://192.168.1.37/TowerDefense/UserRegister.php", form))
+        form.AddField("username", username);
+        form.AddField("password", password);
+        string Username = username;
+        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/UserRegister.php", form))
         {
             www.certificateHandler = new CertificateWhore();
             yield return www.SendWebRequest();
@@ -69,6 +68,7 @@ public class LoginSystem : MonoBehaviour
                 if(www.downloadHandler.text.Contains("Giriş başarılı."))
                 {
                     uiManager.ShowWarningPanel(www.downloadHandler.text, Color.green);
+                    PlayerPrefs.SetString("username", Username);
                     StartCoroutine(LoadScene());
                     
                 }
@@ -84,8 +84,8 @@ public class LoginSystem : MonoBehaviour
 
     IEnumerator LoadScene()
     {
-        yield return new WaitForSeconds(1);
-        SceneManager.LoadScene("Menu");
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadSceneAsync("Menu");
     }
     private void ClearUI()
     {
