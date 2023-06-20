@@ -49,7 +49,7 @@ public class LoginSystem : MonoBehaviour
     IEnumerator Login(string username, string password)
     {
         WWWForm form = new();
-        form.AddField("unity", "girisYapma");
+        form.AddField("Unity", "GirisYapma");
         form.AddField("username", username);
         form.AddField("password", password);
         string Username = username;
@@ -61,6 +61,7 @@ public class LoginSystem : MonoBehaviour
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.Log(www.error);
+                uiManager.ShowWarningPanel("Veri tabanına bağlanılamadı.", Color.red);
             }
             else
             {

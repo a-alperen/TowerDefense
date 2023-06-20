@@ -2,53 +2,76 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class DatabaseConnection : MonoBehaviour
 {
-    
+    [Header("Warning Panel")]
+    [SerializeField] private GameObject warningPanel;
+    [SerializeField] private TextMeshProUGUI warningPanelText;
+
+    #region Veri Kaydetme ve Veri Çekme
     /// <summary>
     /// Veritabanından gelen veriyi dataya kaydeder.
     /// </summary>
     /// <param name="data"></param>
-    private void SetValue(string[] userData,Data data)
+    private void SetValueToData(UserData userData, Data data)
     {
-        data.totalScore = float.Parse(userData[0]);          //totalScore
-        data.totalGold = float.Parse(userData[1]);           //totalGold
-        data.highScore = float.Parse(userData[2]);           //highScore
-        data.highGold = float.Parse(userData[3]);            //highGold
-        data.marketGold = float.Parse(userData[4]);          //marketGold
-        
-        int[] correctAnswers = Array.ConvertAll(userData[6].Split("/"),int.Parse);
-        int[] wrongAnswers = Array.ConvertAll(userData[7].Split("/"), int.Parse);
-        data.correctAnswers = correctAnswers.ToList();
-        data.wrongAnswers = wrongAnswers.ToList();
+        data.totalScore = userData.totalScore;          //totalScore
+        data.totalGold = userData.totalGold;            //totalGold
+        data.highScore = userData.highScore;            //highScore
+        data.highGold = userData.highGold;              //highGold
+        data.marketGold = userData.marketGold;          //marketGold
 
-        string[] tempUpgradeLevels = userData[5].Split(":");
-        List<List<int>> upgradeLevels = new();
-        for(int i = 0; i < tempUpgradeLevels.Length; i++)
-        {
-            int[] temp = Array.ConvertAll(tempUpgradeLevels[i].Split("/"),int.Parse);
-            upgradeLevels.Add(temp.ToList());
-        }
-        
-        string[] tempUpgradePowers = userData[8].Split(":");
-        List<List<float>> upgradePowers = new();
-        for (int i = 0; i < tempUpgradePowers.Length; i++)
-        {
-            float[] temp = Array.ConvertAll(tempUpgradePowers[i].Split("/"), float.Parse);
-            upgradePowers.Add(temp.ToList());
-        }
-        data.upgradeLevels = upgradeLevels;
-        data.upgradePowers = upgradePowers;
+        data.correctAnswers = Array.ConvertAll(userData.correct_answers.Split("/"), int.Parse).ToList();
+        data.wrongAnswers = Array.ConvertAll(userData.wrong_answers.Split("/"), int.Parse).ToList();
 
+        data.upgradeLevels = TranslateInt(userData.upgrade_levels);
+        data.upgradePowers = TranslateFloat(userData.upgrade_powers);
+
+        // Veritabanından gelen upgradelevels string'ini float listesine çevirir.
+        List<List<float>> TranslateFloat(string data)
+        {
+            List<List<float>> list = new();
+            string[] tempString = data.Split(":");
+
+            for (int i = 0; i < tempString.Length; i++)
+            {
+                float[] temp = Array.ConvertAll(tempString[i].Split("/"), float.Parse);
+                list.Add(temp.ToList());
+            }
+
+            return list;
+        }
+        // Veritabanından gelen upgradepowers string'ini int listesine çevirir.
+        List<List<int>> TranslateInt(string data)
+        {
+            List<List<int>> list = new();
+            string[] tempString = data.Split(":");
+
+            for (int i = 0; i < tempString.Length; i++)
+            {
+                int[] temp = Array.ConvertAll(tempString[i].Split("/"), int.Parse);
+                list.Add(temp.ToList());
+            }
+
+            return list;
+        }
     }
 
+    /// <summary>
+    /// Veri tabanından kullanıcı verisini getirir.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public IEnumerator GetUserData(string username, Data data)
     {
         WWWForm form = new();
-        form.AddField("unity", "veriCekme");
+        form.AddField("Unity", "VeriCekme");
         form.AddField("username", username);
 
         using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/UserData.php", form))
@@ -62,38 +85,49 @@ public class DatabaseConnection : MonoBehaviour
             }
             else
             {
-                string temp = www.downloadHandler.text;
-                string[] userData = temp.Split("-");
-                SetValue(userData, data);
+                string responseText = www.downloadHandler.text;
+                UserData userData = JsonUtility.FromJson<UserData>(responseText);
+                SetValueToData(userData, data);
                 Debug.Log("Veri getirildi.");
             }
         }
 
     }
-    public IEnumerator SetData(string username, Data data, float second=3f)
+    /// <summary>
+    /// Kullanıcı verisini veri tabanına kaydeder.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="data"></param>
+    /// <param name="second"></param>
+    /// <returns></returns>
+    public IEnumerator SetData(string username, Data data, float second = 3f)
     {
         while (true)
         {
             yield return StartCoroutine(SetUserData(username, data));
             yield return new WaitForSeconds(second);
-            
+
         }
     }
+    /// <summary>
+    /// Kullanıcı verisini veri tabanına kaydeder.
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public IEnumerator SetData(string username, Data data)
     {
         yield return StartCoroutine(SetUserData(username, data));
     }
     private IEnumerator SetUserData(string username, Data data)
     {
-        string upgradeLevels = "";
-        string correctAnswers = "";
-        string wrongAnswers = "";
-        string upgradePowers = "";
-
-        ConvertData();
+        string correctAnswers = ConvertAnswerCount(data.correctAnswers);
+        string wrongAnswers = ConvertAnswerCount(data.wrongAnswers);
+        string upgradeLevels = ConvertUpgradeLevels(data.upgradeLevels);
+        string upgradePowers = ConvertUpgradePowers(data.upgradePowers);
 
         WWWForm form = new();
-        form.AddField("unity", "veriKaydetme");
+        form.AddField("Unity", "VeriKaydetme");
         form.AddField("username", username);
         form.AddField("totalScore", data.totalScore.ToString());
         form.AddField("totalGold", data.totalGold.ToString());
@@ -119,37 +153,152 @@ public class DatabaseConnection : MonoBehaviour
                 Debug.Log("Sorgu sonucu: " + www.downloadHandler.text);
             }
         }
-        void ConvertData()
+        // Doğru ve yanlış sayısının tutulduğu liste string'e çevirir.
+        string ConvertAnswerCount(List<int> answers)
         {
+            string text = string.Empty;
 
-            for (int i = 0; i < data.upgradeLevels.Count; i++)
+            for (int i = 0; i < answers.Count; i++)
             {
-                for (int j = 0; j < data.upgradeLevels[i].Count; j++)
+                if (i != 0) text += "/";
+                text += answers[i].ToString("F0");
+            }
+            return text;
+        }
+        // Upgrade levels listesini string'e çevirir.
+        string ConvertUpgradeLevels(List<List<int>> list)
+        {
+            string text = string.Empty;
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list[i].Count; j++)
                 {
-                    if (j != 0) upgradeLevels += "/";
-                    upgradeLevels += data.upgradeLevels[i][j].ToString("F0");
+                    if (j != 0) text += "/";
+                    text += list[i][j].ToString("F0");
                 }
-                if(i != data.upgradeLevels.Count - 1) upgradeLevels += ":";
+                if (i != list.Count - 1) text += ":";
             }
-            for (int i = 0; i < data.correctAnswers.Count; i++)
+            return text;
+        }
+        // Upgrade powers listesini string'e çevirir.
+        string ConvertUpgradePowers(List<List<float>> list)
+        {
+            string text = string.Empty;
+            for (int i = 0; i < list.Count; i++)
             {
-                if (i != 0) correctAnswers += "/";
-                correctAnswers += data.correctAnswers[i].ToString("F0");
-            }
-            for (int i = 0; i < data.wrongAnswers.Count; i++)
-            {
-                if (i != 0) wrongAnswers += "/";
-                wrongAnswers += data.wrongAnswers[i].ToString("F0");
-            }
-            for (int i = 0; i < data.upgradePowers.Count; i++)
-            {
-                for (int j = 0; j < data.upgradePowers[i].Count; j++)
+                for (int j = 0; j < list[i].Count; j++)
                 {
-                    if (j != 0) upgradePowers += "/";
-                    upgradePowers += data.upgradePowers[i][j].ToString("F2");
+                    if (j != 0) text += "/";
+                    text += list[i][j].ToString("F2");
                 }
-                if (i != data.upgradePowers.Count - 1) upgradePowers += ":";
+                if (i != list.Count - 1) text += ":";
+            }
+            return text;
+        }
+    }
+    #endregion
+
+    #region Soru Çekme ve Soru Kaydetme
+    public IEnumerator GetQuestion(string lecture,int numberOfQuestions)
+    {
+        WWWForm form = new();
+        form.AddField("Unity", "SoruGetir");
+        form.AddField("Lecture",lecture);
+        form.AddField("SoruSayisi", numberOfQuestions);
+
+        using (UnityWebRequest www =UnityWebRequest.Post("https://localhost/TowerDefense/Question.php", form))
+        {
+            www.certificateHandler = new CertificateWhore();
+            yield return www.SendWebRequest();
+
+            if(www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                string responseText = www.downloadHandler.text;
+                Question question = JsonUtility.FromJson<Question>(responseText);
+                Debug.Log($"{lecture} sorusu getirildi.");
             }
         }
     }
+    public IEnumerator SendQuestion(string lecture,string questionText,string optionA,string optionB,string optionC,string correctAnswer,string username)
+    {
+        string answer = Answer(correctAnswer);
+        WWWForm form = new();
+        form.AddField("Unity", "SoruGonder");
+        form.AddField("Lecture", lecture);
+        form.AddField("QuestionText",questionText);
+        form.AddField("OptionA", optionA);
+        form.AddField("OptionB", optionB);
+        form.AddField("OptionC", optionC);
+        form.AddField("CorrectAnswer", answer);
+        form.AddField("username", username);
+
+        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/Question.php", form))
+        {
+            www.certificateHandler = new CertificateWhore();
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                if(www.downloadHandler.text.Contains("Soru eklenemedi."))
+                {
+                    ShowWarningPanel(www.downloadHandler.text, Color.red);
+                }
+                else
+                {
+                    ShowWarningPanel(www.downloadHandler.text, Color.green);
+                }
+                
+                
+            }
+        }
+        string Answer(string correctAnswer)
+        {
+            return correctAnswer switch
+            {
+                "A Şıkkı" => "A",
+                "B Şıkkı" => "B",
+                "C Şıkkı" => "C",
+                _ => ""
+            };
+        }
+        void ShowWarningPanel(string text, Color color)
+        {
+            warningPanelText.text = text;
+            warningPanel.GetComponent<Image>().color = color;
+            warningPanel.GetComponent<Animator>().Play("Warning");
+        }
+    }
+    #endregion
+
+}
+[Serializable]
+public class UserData
+{
+    public float totalScore;
+    public float totalGold;
+    public float highScore;
+    public float highGold;
+    public float marketGold;
+    public string upgrade_levels;
+    public string correct_answers;
+    public string wrong_answers;
+    public string upgrade_powers;
+}
+
+[Serializable]
+public class Question
+{
+    public string questionText;
+    public string optionAText;
+    public string optionBText;
+    public string optionCText;
+    public char correctAnswer;
 }

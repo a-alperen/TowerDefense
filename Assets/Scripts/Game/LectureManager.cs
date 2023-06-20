@@ -21,15 +21,15 @@ public class LectureManager : MonoBehaviour
 
         if (toggle.name == "Option1")
         {
-            lecture = "hayatbilgisi";
+            lecture = "HayatBilgisi";
         }
         else if (toggle.name == "Option2")
         {
-            lecture = "turkce";
+            lecture = "Turkce";
         }
         else if (toggle.name == "Option3")
         {
-            lecture = "matematik";
+            lecture = "Matematik";
         }
     }
 }

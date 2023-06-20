@@ -45,22 +45,14 @@ public class RegisterSystem : MonoBehaviour
         else if (registerPassword.text != registerrePassword.text)
         {
             warningText = "Girdiğiniz şifreler eşleşmiyor!";
-            uiManager.ShowWarningPanel(warningText, Color.red);
+            uiManager.ShowWarningPanel("Veri tabanına bağlanılamadı.", Color.red);
         }
         else
         {
             if (registerPassword.text == registerrePassword.text && registerPassword.text != "")
             {
-                //Veri tabanı bağlantısı
-
-                //username = registerUsername.text;
-                //password = registerPassword.text;
-
-
                 
-                Debug.Log("Veri tabanına bağlanıldı.");
                 StartCoroutine(Register(registerUsername.text,registerPassword.text));
-
                 ClearUI();
                 
             }
@@ -71,7 +63,7 @@ public class RegisterSystem : MonoBehaviour
     IEnumerator Register(string username, string password)
     {
         WWWForm form = new();
-        form.AddField("unity", "kayitOlma");
+        form.AddField("Unity", "KayitOlma");
         form.AddField("username", username);
         form.AddField("password", password);
 
@@ -84,6 +76,7 @@ public class RegisterSystem : MonoBehaviour
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.Log(www.error);
+                uiManager.ShowWarningPanel("Veri tabanına bağlanılamadı.", Color.red);
             }
             else
             {

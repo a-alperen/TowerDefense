@@ -31,13 +31,13 @@ public class TowerBullet : MonoBehaviour
     void HitTarget()
     {
         if (target == null) return;
-        if (GameManager.Instance.hitCount % 6 == 0)
+        if (GameManager.Instance.hitCount % 6 == 1)
         {
             if (QuestionManager.Instance != null)
             {
                 QuestionManager.Instance.AskQuestion();
             }
-            GameManager.Instance.hitCount = 0;
+            GameManager.Instance.hitCount = 1;
         }
         GameManager.Instance.hitCount++;
         target.GetComponent<Student>().TakeDamage(damage);

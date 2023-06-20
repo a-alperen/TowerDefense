@@ -35,15 +35,15 @@ public class QuestionManager : MonoBehaviour
     public void AskQuestion()
     {
         GameManager.Instance.isPaused = true;
-        if (LectureManager.lecture == "matematik")
+        if (LectureManager.lecture == "Matematik")
         {
             UISystem.Instance.ShowMathQuestionPanel(AskMathQuestion());
         }
-        else if (LectureManager.lecture == "hayatbilgisi")
+        else if (LectureManager.lecture == "HayatBilgisi")
         {
             UISystem.Instance.ShowQuestionPanel();
         }
-        else if (LectureManager.lecture == "turkce")
+        else if (LectureManager.lecture == "Turkce")
         {
             UISystem.Instance.ShowQuestionPanel();
         }
