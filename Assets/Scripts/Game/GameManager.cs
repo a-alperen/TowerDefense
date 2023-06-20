@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     public int score;
     
     private DatabaseConnection connection;
+    private bool isTimerRunning = false;
+
     //public GameObject winPanel;
 
     private void Awake()
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour
         UISystem.Instance.UpdateUIText(gameMoney, time, correctCount, wrongCount, score, gold);
         UISystem.Instance.CloseGameOverPanel();
         //StartCoroutine("EarnGameMoney");
+        StartTimer();
     }
 
     // Update is called once per frame
@@ -50,7 +53,6 @@ public class GameManager : MonoBehaviour
     {
         UISystem.Instance.UpdateUIText(gameMoney, time, correctCount, wrongCount, score, gold);
         GameStatus();
-        Timer();
         
     }
 
@@ -65,14 +67,13 @@ public class GameManager : MonoBehaviour
 
         IEnumerator Win()
         {
-            yield return null;
             ClearMap();
             isPlaying = false;
             isPaused = true;
             StopAllCoroutines();
             SaveGameData(data);
             UISystem.Instance.ShowGameOverPanel("OYUNU KAZANDIN", score, gold, correctCount, wrongCount);
-            Debug.Log("you win");
+            yield return null;
         }
     }
     
@@ -82,14 +83,13 @@ public class GameManager : MonoBehaviour
 
         IEnumerator Loose()
         {
-            yield return null;
             ClearMap();
             isPlaying = false;
             isPaused = true;
             StopAllCoroutines();
             SaveGameData(data);
             UISystem.Instance.ShowGameOverPanel("OYUNU KAYBETTİN", score, gold, correctCount, wrongCount);
-            Debug.Log("you loose");
+            yield return null;
         }
     }
 
@@ -117,16 +117,28 @@ public class GameManager : MonoBehaviour
             yield return SceneManager.LoadSceneAsync("Menu");
         }
     }
-    private void Timer()// Oyundaki geri sayimi kontrol eder.
+    IEnumerator TimerCoroutine()
     {
-        
-        if (time >= 0)
+        isTimerRunning = true;
+
+        while (0 < time)
         {
             time -= Time.deltaTime;
+            yield return null;
         }
-        else GameOver();
+
+        isTimerRunning = false;
+        GameOver();
     }
-    
+
+    void StartTimer()
+    {
+        if (!isTimerRunning)
+        {
+            StartCoroutine(TimerCoroutine());
+        }
+    }
+
     private void SaveGameData(Data data)
     {
         if (data.highGold < gold) data.highGold = gold;

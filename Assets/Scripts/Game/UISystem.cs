@@ -22,6 +22,11 @@ public class UISystem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameMoneyText;
     [SerializeField] private TextMeshProUGUI mathQuestionText;
     [SerializeField] private TMP_InputField mathAnswerField;
+    [Header("Question Panel Stuff")]
+    [SerializeField] private TextMeshProUGUI questionText;
+    [SerializeField] private Toggle optionA;
+    [SerializeField] private Toggle optionB;
+    [SerializeField] private Toggle optionC;
 
     [Header("Panels")]
     [SerializeField] private GameObject gameOverPanel;        // Oyun bitince açılan panel
@@ -115,8 +120,13 @@ public class UISystem : MonoBehaviour
         mathQuestionPanel.SetActive(false);
     }
 
-    public void ShowQuestionPanel()
+    public void ShowQuestionPanel(Question question)
     {
+        questionText.text = question.question_text;
+        optionA.GetComponentInChildren<Text>().text = question.optionA_text;
+        optionB.GetComponentInChildren<Text>().text = question.optionB_text;
+        optionC.GetComponentInChildren<Text>().text = question.optionC_text;
+
         questionPanel.SetActive(true);
     }
     public void CloseQuestionPanel()

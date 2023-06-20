@@ -6,6 +6,7 @@ using TMPro;
 using System.Linq;
 using System;
 using static System.Net.Mime.MediaTypeNames;
+using UnityEngine.Networking;
 
 public class QuestionManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class QuestionManager : MonoBehaviour
     public TMP_InputField answerField;
 
     private int number1, number2,result;
-
+    public Question question;
     private void Awake()
     {
         Instance = this;
@@ -24,7 +25,7 @@ public class QuestionManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        question = new Question();
         AskLecture();
         
     }
@@ -35,19 +36,62 @@ public class QuestionManager : MonoBehaviour
     public void AskQuestion()
     {
         GameManager.Instance.isPaused = true;
-        if (LectureManager.lecture == "Matematik")
-        {
-            UISystem.Instance.ShowMathQuestionPanel(AskMathQuestion());
-        }
-        else if (LectureManager.lecture == "HayatBilgisi")
-        {
-            UISystem.Instance.ShowQuestionPanel();
-        }
-        else if (LectureManager.lecture == "Turkce")
-        {
-            UISystem.Instance.ShowQuestionPanel();
-        }
 
+        StartCoroutine(Ask());
+
+        IEnumerator Ask()
+        {
+            yield return StartCoroutine(GetQuestion(LectureManager.lecture));
+            if (LectureManager.lecture == "Matematik")
+            {
+                UISystem.Instance.ShowMathQuestionPanel(AskMathQuestion());
+            }
+            else if (LectureManager.lecture == "Hayat Bilgisi")
+            {
+                UISystem.Instance.ShowQuestionPanel(question);
+            }
+            else if (LectureManager.lecture == "Türkçe")
+            {
+                UISystem.Instance.ShowQuestionPanel(question);
+            }
+        }
+        IEnumerator GetQuestion(string lecture)
+        {
+            WWWForm form = new();
+
+            form.AddField("Unity", "SoruGetir");
+            form.AddField("Lecture", lecture);
+
+            using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/Question.php", form))
+            {
+                www.certificateHandler = new CertificateWhore();
+                yield return www.SendWebRequest();
+
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(www.error);
+                }
+                else
+                {
+                    string responseText = www.downloadHandler.text;
+                    if (responseText.Contains("Soru bulunamadı."))
+                    {
+                        Debug.Log("Soru getirilemedi.");
+                    }
+                    else
+                    {
+                        question = JsonUtility.FromJson<Question>(responseText);
+                        Debug.Log(question.question_text);
+                        Debug.Log(question.optionA_text);
+                        Debug.Log(question.optionB_text);
+                        Debug.Log(question.optionC_text);
+                        Debug.Log(question.correct_answer);
+                        Debug.Log($"{lecture} sorusu getirildi.");
+                    }
+                    
+                }
+            }
+        }
     }
 
     public void AskLecture()

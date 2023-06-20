@@ -17,12 +17,12 @@ public class RadioButtonManager : MonoBehaviour
         Toggle toggle = toggleGroup.ActiveToggles().FirstOrDefault();
         UISystem.Instance.CloseQuestionPanel();
         GameManager.Instance.isPaused = false;
-        if(toggle.name == "Option1")
+        if(toggle.name == QuestionManager.Instance.question.correct_answer)
         {
             Debug.Log("Dogru bildin!");
             GameManager.Instance.gameMoney += 50;
-            GameManager.Instance.gold += UnityEngine.Random.Range(100, 150);
-            GameManager.Instance.score += UnityEngine.Random.Range(100, 500);
+            GameManager.Instance.gold += Random.Range(100, 150);
+            GameManager.Instance.score += Random.Range(100, 500);
             GameManager.Instance.correctCount += 1;
 
         }

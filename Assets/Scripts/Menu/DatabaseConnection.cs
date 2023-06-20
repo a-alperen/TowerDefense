@@ -198,31 +198,8 @@ public class DatabaseConnection : MonoBehaviour
     }
     #endregion
 
-    #region Soru Çekme ve Soru Kaydetme
-    public IEnumerator GetQuestion(string lecture,int numberOfQuestions)
-    {
-        WWWForm form = new();
-        form.AddField("Unity", "SoruGetir");
-        form.AddField("Lecture",lecture);
-        form.AddField("SoruSayisi", numberOfQuestions);
-
-        using (UnityWebRequest www =UnityWebRequest.Post("https://localhost/TowerDefense/Question.php", form))
-        {
-            www.certificateHandler = new CertificateWhore();
-            yield return www.SendWebRequest();
-
-            if(www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(www.error);
-            }
-            else
-            {
-                string responseText = www.downloadHandler.text;
-                Question question = JsonUtility.FromJson<Question>(responseText);
-                Debug.Log($"{lecture} sorusu getirildi.");
-            }
-        }
-    }
+    #region Soru Kaydetme
+    
     public IEnumerator SendQuestion(string lecture,string questionText,string optionA,string optionB,string optionC,string correctAnswer,string username)
     {
         string answer = Answer(correctAnswer);
@@ -296,9 +273,9 @@ public class UserData
 [Serializable]
 public class Question
 {
-    public string questionText;
-    public string optionAText;
-    public string optionBText;
-    public string optionCText;
-    public char correctAnswer;
+    public string question_text;
+    public string optionA_text;
+    public string optionB_text;
+    public string optionC_text;
+    public string correct_answer;
 }
