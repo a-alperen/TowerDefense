@@ -126,6 +126,11 @@ public class DatabaseConnection : MonoBehaviour
         string upgradeLevels = ConvertUpgradeLevels(data.upgradeLevels);
         string upgradePowers = ConvertUpgradePowers(data.upgradePowers);
 
+        Debug.Log("Doğru cevap:" + correctAnswers);
+        Debug.Log("Yanlış cevap:" + wrongAnswers);
+        Debug.Log("Upgrade levels" + upgradeLevels);
+        Debug.Log("Upgrade powers" + upgradePowers);
+
         WWWForm form = new();
         form.AddField("Unity", "VeriKaydetme");
         form.AddField("username", username);

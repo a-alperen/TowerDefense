@@ -149,15 +149,15 @@ public class GameManager : MonoBehaviour
 
         switch (LectureManager.lecture)
         {
-            case "hayatbilgisi":
+            case "Hayat Bilgisi":
                 data.correctAnswers[0] += correctCount;
                 data.wrongAnswers[0] += wrongCount;
                 break;
-            case "turkce":
+            case "Türkçe":
                 data.correctAnswers[1] += correctCount;
                 data.wrongAnswers[1] += wrongCount;
                 break;
-            case "matematik":
+            case "Matematik":
                 data.correctAnswers[2] += correctCount;
                 data.wrongAnswers[2] += wrongCount;
                 break;

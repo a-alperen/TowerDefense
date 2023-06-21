@@ -13,6 +13,7 @@ public class Student : MonoBehaviour
     public float range;
     [SerializeField] private float fireRate = 1f;
     private float fireCountDown = 0f;
+    public bool isInvincible = false;
 
     [Header("Unity Setup Fields")]
     public Vector3 healthBarOffset;
@@ -153,14 +154,18 @@ public class Student : MonoBehaviour
     /// </summary>
     public void TakeDamage(float amount)
     {
-        health -= amount;
-
-        healthBar.fillAmount = health / startHealth;
-
-        if(health <= 0)
+        if (!isInvincible)
         {
-            Die();
+            health -= amount;
+
+            healthBar.fillAmount = health / startHealth;
+
+            if (health <= 0)
+            {
+                Die();
+            }
         }
+        
     }
     private void Die()
     {

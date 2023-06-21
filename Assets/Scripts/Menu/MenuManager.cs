@@ -18,6 +18,22 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private TMP_InputField optionCText;
     [SerializeField] private TMP_Dropdown answerDropdown;
     [SerializeField] private TMP_Dropdown lectureDropdown;
+    [Header("Other Stuff")]
+    [SerializeField] private GameObject questionSendButton;
+
+    private bool canSendQuestion = false;
+
+    private void Update()
+    {
+        if(!canSendQuestion)
+        {
+            if(MarketManager.Instance.data.totalScore >= 25000)
+            {
+                canSendQuestion = true;
+                questionSendButton.SetActive(true);
+            }
+        }
+    }
 
     private void Start()
     {

@@ -81,11 +81,6 @@ public class QuestionManager : MonoBehaviour
                     else
                     {
                         question = JsonUtility.FromJson<Question>(responseText);
-                        Debug.Log(question.question_text);
-                        Debug.Log(question.optionA_text);
-                        Debug.Log(question.optionB_text);
-                        Debug.Log(question.optionC_text);
-                        Debug.Log(question.correct_answer);
                         Debug.Log($"{lecture} sorusu getirildi.");
                     }
                     

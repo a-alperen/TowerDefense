@@ -65,7 +65,7 @@ public class LoginSystem : MonoBehaviour
             }
             else
             {
-                Debug.Log("Form upload complete!");
+                
                 if(www.downloadHandler.text.Contains("Giriş başarılı."))
                 {
                     uiManager.ShowWarningPanel(www.downloadHandler.text, Color.green);
