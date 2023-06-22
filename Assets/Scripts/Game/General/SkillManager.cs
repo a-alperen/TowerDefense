@@ -1,11 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class SkillManager : MonoBehaviour
 {
     public static SkillManager Instance { get; private set; }
+    [Header("Texts")]
+    [SerializeField] private TextMeshProUGUI speedUpDurationText;
+    [SerializeField] private TextMeshProUGUI protectionDurationText;
+    [Header("Game objects")]
+    [SerializeField] private GameObject speedUpGo;
+    [SerializeField] private GameObject protectionGo;
 
+    private float speedUpDuration = 3f;
+    private float protectionDuration = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +24,16 @@ public class SkillManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (speedUpGo.activeSelf)
+        {
+            speedUpDuration -= Time.deltaTime; 
+            speedUpDurationText.text = speedUpDuration.ToString("F1");
+        }
+        if (protectionGo.activeSelf)
+        {
+            protectionDuration -= Time.deltaTime;
+            protectionDurationText.text = protectionDuration.ToString("F1");
+        }
         
     }
 
@@ -33,6 +52,8 @@ public class SkillManager : MonoBehaviour
         if(Students.students.Count != 0)
         {
             List<GameObject> validStudents = new();
+            speedUpGo.SetActive(true);
+            speedUpDuration = 3f;
 
             foreach (var item in Students.students)
             {
@@ -44,6 +65,7 @@ public class SkillManager : MonoBehaviour
             }
 
             yield return new WaitForSeconds(3f);
+            speedUpGo.SetActive(false);
 
             if (Students.students.Count != 0)
             {
@@ -77,6 +99,8 @@ public class SkillManager : MonoBehaviour
         if (Students.students.Count != 0)
         {
             List<GameObject> validStudents = new();
+            protectionGo.SetActive(true);
+            protectionDuration = 3f;
 
             foreach (var item in Students.students)
             {
@@ -88,6 +112,7 @@ public class SkillManager : MonoBehaviour
             }
 
             yield return new WaitForSeconds(3f);
+            protectionGo.SetActive(false);
 
             if (Students.students.Count != 0)
             {
