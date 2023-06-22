@@ -67,7 +67,7 @@ public class MenuManager : MonoBehaviour
         IEnumerator Exit()
         {
             yield return connection.SetData(PlayerPrefs.GetString("username"), MarketManager.Instance.data);
-            Application.Quit();
+            yield return SceneManager.LoadSceneAsync("Login");
         }
     }
     public void SendQuestion()
