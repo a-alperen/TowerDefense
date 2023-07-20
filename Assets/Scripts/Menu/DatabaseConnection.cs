@@ -74,9 +74,8 @@ public class DatabaseConnection : MonoBehaviour
         form.AddField("Unity", "VeriCekme");
         form.AddField("username", username);
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/UserData.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/UserData.php", form))
         {
-            www.certificateHandler = new CertificateWhore();
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
@@ -144,9 +143,9 @@ public class DatabaseConnection : MonoBehaviour
         form.AddField("wrongAnswer", wrongAnswers);
         form.AddField("upgradePower", upgradePowers);
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/UserData.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/UserData.php", form))
         {
-            www.certificateHandler = new CertificateWhore();
+            
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
@@ -218,9 +217,8 @@ public class DatabaseConnection : MonoBehaviour
         form.AddField("CorrectAnswer", answer);
         form.AddField("username", username);
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/Question.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/Question.php", form))
         {
-            www.certificateHandler = new CertificateWhore();
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)

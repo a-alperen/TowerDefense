@@ -30,11 +30,10 @@ public class HighScoreManager : MonoBehaviour
     }
     private IEnumerator HighScores()
     {
-        string url = "https://localhost/TowerDefense/HighScore.php";
+        string url = "http://localhost/TowerDefense/HighScore.php";
 
         using (UnityWebRequest www = UnityWebRequest.Get(url))
         {
-            www.certificateHandler = new CertificateWhore();
             yield return www.SendWebRequest();
 
             if (www.result == UnityWebRequest.Result.Success)

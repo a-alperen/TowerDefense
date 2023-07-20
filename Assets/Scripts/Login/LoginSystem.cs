@@ -53,9 +53,8 @@ public class LoginSystem : MonoBehaviour
         form.AddField("username", username);
         form.AddField("password", password);
         string Username = username;
-        using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/UserRegister.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/UserRegister.php", form))
         {
-            www.certificateHandler = new CertificateWhore();
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)

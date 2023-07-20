@@ -62,9 +62,8 @@ public class QuestionManager : MonoBehaviour
             form.AddField("Unity", "SoruGetir");
             form.AddField("Lecture", lecture);
 
-            using (UnityWebRequest www = UnityWebRequest.Post("https://localhost/TowerDefense/Question.php", form))
+            using (UnityWebRequest www = UnityWebRequest.Post("http://localhost/TowerDefense/Question.php", form))
             {
-                www.certificateHandler = new CertificateWhore();
                 yield return www.SendWebRequest();
 
                 if (www.result != UnityWebRequest.Result.Success)
